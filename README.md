@@ -1,4 +1,15 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### App Description
+The Whack-A-Mole web app is a simulation of the classic whack-a-mole game where a picture of a mole moves in a grid of nine squares and the user will have to catch and hit the mole to increase score within the amount of time they have.
+
+### App Walk-through
+<img src="" width=200><br>
+
+## Features
+- [x] Create New Project in Xcode
+- [x] Add a view for the front side of the flashcard to display the question
+- [x] Add a view for the back side of the flashcard to display the answer
+- [x] Build in logic to show the answer side when the card is tapped
+- [x] Push code to GitHub
 
 ## Available Scripts
 
