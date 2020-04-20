@@ -1,7 +1,7 @@
-### [DEMO](https://brave-wescoff-070143.netlify.app)
+### [DEMO](https://zen-goodall-82f929.netlify.app/)
 
 ### App Description
-The [Whack-A-Mole web app](https://brave-wescoff-070143.netlify.app) is a simulation of the classic whack-a-mole game where a picture of a mole moves in a grid of nine squares and the user will have to catch and hit the mole to increase score within the amount of time they have.
+The [Whack-A-Mole web app](https://zen-goodall-82f929.netlify.app/) is a simulation of the classic whack-a-mole game where a picture of a mole moves in a grid of nine squares and the user will have to catch and hit the mole to increase score within the amount of time they have.
 
 ### App Walk-through
 <img src="https://media.giphy.com/media/LmYzlp94qY9DU5q8lI/giphy.gif" width=300><br>
