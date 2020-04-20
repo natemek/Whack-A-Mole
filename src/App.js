@@ -119,12 +119,14 @@ class Game extends React.Component {
   }
 
   resetGame () {
-    this.setState({
-      squares: Array(9).fill("square"),
-      score: 0,
-      timeLeft: 10
-    })
-    this.startTimer()
+    if (this.state.timeLeft === 0) {
+      this.setState({
+        squares: Array(9).fill("square"),
+        score: 0,
+        timeLeft: 10
+      })
+      this.startTimer()
+    }
   }
 
   render () {
