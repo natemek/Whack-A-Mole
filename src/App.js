@@ -130,9 +130,10 @@ class Game extends React.Component {
   render () {
     return (
       <div className="center">
+        <h1>Whack-A-Mole</h1>
+
         <button onClick={() => this.resetGame()}>Reset</button>
         <button onClick={() => this.startTimer()}>Start</button>
-        <h1>Whack-A-Mole</h1>
 
         <h4 id="score">Score: {this.state.score}</h4>
 
