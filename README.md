@@ -2,7 +2,7 @@
 The Whack-A-Mole web app is a simulation of the classic whack-a-mole game where a picture of a mole moves in a grid of nine squares and the user will have to catch and hit the mole to increase score within the amount of time they have.
 
 ### App Walk-through
-<img src="" width=200><br>
+<img src="https://media.giphy.com/media/LmYzlp94qY9DU5q8lI/giphy.gif" width=300><br>
 
 ## Features
 - [x] Create New Project in Xcode
