@@ -21,18 +21,31 @@
     height: 100px;
 }
 
-.center {
-    margin: auto;
-    width: 50%;
-    padding: 20px;
+.parent-div {
+    padding: 50px;
+    background-color: bisque;
+    width: 100vh;
+    height: 100vh;
 }
 
-#score {
-    margin: auto;
-    width: 50%;
+.game, .high-score-list {
+    float: left;
+    margin-right: 20px;
 }
+
+/* #score {
+    margin: auto;
+} */
 
 #time-left {
     margin: auto;
-    width: 50%;
+}
+
+#test {
+    background-color: violet;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
 }

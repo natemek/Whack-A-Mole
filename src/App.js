@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import HashMap from 'hashmap';
 import './style.css';
-import mole from './mole.jpg'
+import LeadersJson from './leaders.json';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Table from 'react-bootstrap/Table';
 
 /**
  * Represents a single square component which can be rendered using
@@ -15,7 +18,9 @@ class Square extends React.Component {
 
   render () {
     return (
-      <button className={this.props.className} 
+      <button 
+        variant="secondary"
+        className={this.props.className} 
         id={this.props.id} 
         onClick={() => this.props.onClick()}>
       </button>
@@ -61,6 +66,64 @@ class Board extends React.Component {
   }
 }
 
+class Leaderboard extends React.Component {
+  renderRow (num, username, score) {
+    return (
+      <tr key={num}>
+        <td>{num}</td>
+        <td>{username}</td>
+        <td>{score}</td>
+      </tr>
+    );
+  }
+  render () {
+    return (
+      <Table striped bordered hover variant="secondary">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Username</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.leaders.map((leader) => 
+            //console.log("num= ", leader.num, "user= ", leader.user, "score= ", leader.score))
+            this.renderRow(leader.num, leader.user, leader.score))
+          }
+        </tbody>
+      </Table>
+      
+    );
+  }
+}
+
+class GameOver extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      show: true,
+    };
+  }
+  render () {
+    return (
+      <Modal show={this.props.show} onHide={() => (null)} animation="true">
+        <Modal.Header>
+          <Modal.Title>Game Over!</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button onClick={() => this.props.disapper()} variant="outline-success">
+            Leave
+          </Button>
+          <Button onClick={() => {this.props.disapper();this.props.reset()}} variant="warning">
+            Reset
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
 /**
  * Game component has all the game functionalites and is parent to
  * Board
@@ -70,8 +133,11 @@ class Game extends React.Component {
     super(props);
     this.state = {
       squares: Array(9).fill("square"), //className for squares
+      leaders: [[1,"@test", 20], [2,"@kgb", 18], [3,"@etj", 15]],
       score: 0,
-      timeLeft: 10,
+      timeLeft: 5,
+      show_alert: false,
+      data: [],
     };
   }
 
@@ -113,7 +179,9 @@ class Game extends React.Component {
       } else {
         clearInterval(this.myInterval)
         this.setState({squares: Array(9).fill("square")})
-        alert('GAME OVER! Your final score is ' + this.state.score)
+        // alert('GAME OVER! Your final score is ' + this.state.score)
+        // GameOver();
+        this.setState({show_alert: true})
       }
     }, 1000)
   }
@@ -123,26 +191,46 @@ class Game extends React.Component {
       this.setState({
         squares: Array(9).fill("square"),
         score: 0,
-        timeLeft: 10
+        timeLeft: 5
       })
       this.startTimer()
     }
   }
 
+  async componentDidMount() {
+    const url = "https://gist.githubusercontent.com/natemek/48328f5890efb975a2f7fdef990b0eb0/raw/a74af4b6a1f263a1ba62713e69636db299552787/leaders";
+    const response = await fetch(url);
+    const api_data = await response.json();
+    this.setState({data: api_data})
+    console.log(api_data)
+  }
+
   render () {
     return (
-      <div className="center">
-        <h1>Whack-A-Mole</h1>
+      <div className="parent-div">
+        
+        <div className="page-header">
+          <h1>Whack-A-Mole</h1>
+        </div>
 
-        <button onClick={() => this.resetGame()}>Reset</button>
-        <button onClick={() => this.startTimer()}>Start</button>
+        <button type="button" className="btn btn-success" 
+          onClick={() => this.startTimer()}>Start</button>
+        <button type="button" className="btn btn-warning"
+          onClick={() => {this.resetGame()}}> Reset </button>
 
         <h4 id="score">Score: {this.state.score}</h4>
-
-        <h4 id="time-left">Seconds left: {this.state.timeLeft}</h4>
-        
-        <Board squares= {this.state.squares} scoreCounter= {(i) => this.scoreCounter(i)}/>
-        
+        <div className="game">
+          <h4 id="time-left">Seconds left: {this.state.timeLeft}</h4>
+          
+          <Board squares= {this.state.squares} scoreCounter= {(i) => this.scoreCounter(i)}/>
+          <GameOver show= {this.state.show_alert} 
+              disapper= {() => this.setState({show_alert:false})}
+              reset= {() => this.resetGame()}/>
+        </div>
+        <div className="high-score-list">
+          <h3>High Scores</h3>
+          <Leaderboard leaders={this.state.data}/>
+        </div>
       </div>
     );
   }

@@ -6,11 +6,13 @@ The [Whack-A-Mole web app](https://zen-goodall-82f929.netlify.app/) is a simulat
 ### App Walk-through
 <img src="https://media.giphy.com/media/LmYzlp94qY9DU5q8lI/giphy.gif" width=300><br>
 
-## Features
+## Features 
 - [x] Mole moves to random square every sec
 - [x] Keeps track of score
 - [x] Start and reset buttons to start and restart game
 
-## To-Do
-- [ ] Add a list to keep highscore
+## To-Do (not deployed)
+- [x] Add a list to keep highscore
+- [x] Used gist
+- [ ] Connect it to a mongodb
 
