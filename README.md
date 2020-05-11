@@ -11,7 +11,7 @@ The [Whack-A-Mole web app](https://zen-goodall-82f929.netlify.app/) is a simulat
 - [x] Keeps track of score
 - [x] Start and reset buttons to start and restart game
 
-## To-Do (not deployed)
+## To-Do (not yet in deployed version)
 - [x] Add a list to keep highscore
 - [x] Used gist
 - [x] Connect it to a mongodb
