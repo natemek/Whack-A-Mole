@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './style.css';
-import LeadersJson from './leaders.json';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Form from 'react-bootstrap/Form';
 
 /**
  * Represents a single square component which can be rendered using
@@ -66,16 +67,47 @@ class Board extends React.Component {
   }
 }
 
-class Leaderboard extends React.Component {
-  renderRow (num, username, score) {
+class Leader extends React.Component {
+
+  render () {
     return (
-      <tr key={num}>
-        <td>{num}</td>
-        <td>{username}</td>
-        <td>{score}</td>
-      </tr>
+      <>
+        <tr key={this.props.id}>
+          <td>{this.props.num}</td>
+          <td>@{this.props.username}</td>
+          <td>{this.props.score}</td>
+        </tr>
+      </>
     );
   }
+}
+
+class Leaderboard extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      leaders: [],
+    };
+  }
+
+  async componentDidMount() {
+    const url = `/api/leaders/`;
+    const response = await fetch(url);
+    const api_data = await response.json();
+    console.log(api_data);
+    api_data.forEach((obj) => {
+      const mapData = async () => {
+        this.setState(state => {
+          const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
+          return {
+            leaders,
+          };
+        })
+      }
+      mapData();
+    })
+  }
+
   render () {
     return (
       <Table striped bordered hover variant="secondary">
@@ -87,9 +119,16 @@ class Leaderboard extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.leaders.map((leader) => 
-            //console.log("num= ", leader.num, "user= ", leader.user, "score= ", leader.score))
-            this.renderRow(leader.num, leader.user, leader.score))
+          {
+            this.state.leaders.map((leader, index) => {
+              return (
+                <Leader key={leader[0]}   
+                        num= {index + 1}
+                        id= {leader[0]}
+                        username= {leader[1]}
+                        score= {leader[2]}/>
+              );
+            })
           }
         </tbody>
       </Table>
@@ -103,21 +142,54 @@ class GameOver extends React.Component {
     super(props);
     this.state = {
       show: true,
+      username: "",
     };
   }
+
   render () {
     return (
       <Modal show={this.props.show} onHide={() => (null)} animation="true">
         <Modal.Header>
-          <Modal.Title>Game Over!</Modal.Title>
+          <Modal.Title>Game Over! You Scored {this.props.score}</Modal.Title>
         </Modal.Header>
         <Modal.Footer>
-          <Button onClick={() => this.props.disapper()} variant="outline-success">
-            Leave
-          </Button>
-          <Button onClick={() => {this.props.disapper();this.props.reset()}} variant="warning">
-            Reset
-          </Button>
+
+          <Form>
+            <InputGroup>
+              <InputGroup.Prepend>
+                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
+              </InputGroup.Prepend>
+              <Form.Control
+                type="text"
+                placeholder="Username"
+                aria-describedby="inputGroupPrepend"
+                name="username"
+                value={this.state.username}
+                onChange={(event) => {
+                  this.setState({username: event.target.value});
+                  console.log(`${this.state.username}`);
+                }}
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                Please choose a username.
+              </Form.Control.Feedback>
+              <Button className="score-form-submit" variant="primary" 
+                      type="submit"
+                      onClick={() => {
+                        this.props.score >= 10 ? this.props.addLeader() : 
+                        console.log("Your score is not high enough!");
+                      }}>
+                Submit
+              </Button>
+              <Button className="score-form-Leave" 
+                      onClick={() => this.props.disapper()}   
+                      variant="outline-success">
+                Leave
+              </Button>
+            </InputGroup>
+            
+          </Form>
         </Modal.Footer>
       </Modal>
     );
@@ -197,13 +269,13 @@ class Game extends React.Component {
     }
   }
 
-  async componentDidMount() {
-    const url = "https://gist.githubusercontent.com/natemek/48328f5890efb975a2f7fdef990b0eb0/raw/a74af4b6a1f263a1ba62713e69636db299552787/leaders";
-    const response = await fetch(url);
-    const api_data = await response.json();
-    this.setState({data: api_data})
-    console.log(api_data)
-  }
+  // async componentDidMount() {
+  //   const url = "https://gist.githubusercontent.com/natemek/48328f5890efb975a2f7fdef990b0eb0/raw/a74af4b6a1f263a1ba62713e69636db299552787/leaders";
+  //   const response = await fetch(url);
+  //   const api_data = await response.json();
+  //   this.setState({data: api_data})
+  //   console.log(api_data)
+  // }
 
   render () {
     return (
@@ -225,11 +297,13 @@ class Game extends React.Component {
           <Board squares= {this.state.squares} scoreCounter= {(i) => this.scoreCounter(i)}/>
           <GameOver show= {this.state.show_alert} 
               disapper= {() => this.setState({show_alert:false})}
-              reset= {() => this.resetGame()}/>
+              reset= {() => this.resetGame()}
+              addLeader= {() => this.addLeader()}
+              score= {this.state.score}/>
         </div>
         <div className="high-score-list">
           <h3>High Scores</h3>
-          <Leaderboard leaders={this.state.data}/>
+          <Leaderboard />
         </div>
       </div>
     );

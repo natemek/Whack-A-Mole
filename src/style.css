@@ -33,6 +33,17 @@
     margin-right: 20px;
 }
 
+.score-form-submit {
+    float: left;
+    margin-right: 60px;
+    margin-left: 5px;
+}
+
+.score-form-leave {
+    float: left;
+    margin-left: 40px;
+}
+
 /* #score {
     margin: auto;
 } */
