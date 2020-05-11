@@ -19,7 +19,7 @@ The [Whack-A-Mole web app](https://zen-goodall-82f929.netlify.app/) is a simulat
 - [ ] Add user to leaderboard from form
 
 ## Quick Strart
-<li> npm i </li>
+<li> npm i then npm start </li>
 <li> in backend dir npm serve </li>
 <li> in backend dir mongod --dbpath /System/Volumes/Data/data/db </li>
 
