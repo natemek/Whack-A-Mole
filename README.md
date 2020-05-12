@@ -23,6 +23,7 @@ The [Whack-A-Mole web app](http://ec2-54-91-232-242.compute-1.amazonaws.com/) is
 
 ## Quick Strart
 <li> cd backend </li>
+<li> npm install </li>
 <li> npm serve </li>
 <li> in backend dir mongod --dbpath /System/Volumes/Data/data/db </li>
 
