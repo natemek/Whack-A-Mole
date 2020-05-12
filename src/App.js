@@ -7,6 +7,8 @@ import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 /**
  * Represents a single square component which can be rendered using
@@ -74,7 +76,7 @@ class Leader extends React.Component {
       <>
         <tr key={this.props.id}>
           <td>{this.props.num}</td>
-          <td>@{this.props.username}</td>
+          <td>{this.props.username}</td>
           <td>{this.props.score}</td>
         </tr>
       </>
@@ -90,24 +92,6 @@ class Leaderboard extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    const url = `/api/leaders/`;
-    const response = await fetch(url);
-    const api_data = await response.json();
-    console.log(api_data);
-    api_data.forEach((obj) => {
-      const mapData = async () => {
-        this.setState(state => {
-          const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
-          return {
-            leaders,
-          };
-        })
-      }
-      mapData();
-    })
-  }
-
   render () {
     return (
       <Table striped bordered hover variant="secondary">
@@ -120,7 +104,7 @@ class Leaderboard extends React.Component {
         </thead>
         <tbody>
           {
-            this.state.leaders.map((leader, index) => {
+            this.props.leaders.map((leader, index) => {
               return (
                 <Leader key={leader[0]}   
                         num= {index + 1}
@@ -148,15 +132,16 @@ class GameOver extends React.Component {
 
   render () {
     return (
+      <>
       <Modal show={this.props.show} onHide={() => (null)} animation="true">
         <Modal.Header>
           <Modal.Title>Game Over! You Scored {this.props.score}</Modal.Title>
         </Modal.Header>
-        <Modal.Footer>
-
-          <Form>
-            <InputGroup>
-              <InputGroup.Prepend>
+        <Row>
+          <Col xs={9}>
+            <Form>
+              <InputGroup>
+                <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
               </InputGroup.Prepend>
               <Form.Control
@@ -167,31 +152,41 @@ class GameOver extends React.Component {
                 value={this.state.username}
                 onChange={(event) => {
                   this.setState({username: event.target.value});
-                  console.log(`${this.state.username}`);
                 }}
                 required
               />
               <Form.Control.Feedback type="invalid">
                 Please choose a username.
               </Form.Control.Feedback>
-              <Button className="score-form-submit" variant="primary" 
-                      type="submit"
-                      onClick={() => {
-                        this.props.score >= 10 ? this.props.addLeader() : 
-                        console.log("Your score is not high enough!");
-                      }}>
-                Submit
-              </Button>
-              <Button className="score-form-Leave" 
-                      onClick={() => this.props.disapper()}   
-                      variant="outline-success">
-                Leave
-              </Button>
-            </InputGroup>
-            
-          </Form>
+              
+              </InputGroup>
+            </Form>
+          </Col>
+          <Col>
+            <Button variant="primary" 
+                    type="submit"
+                    onClick={() => {
+                      try {
+                        this.props.disapper();
+                        this.props.addLeader(this.state.username, this.props.score);
+                        console.log("Submit button clicked");
+                      } catch (error) {
+                        console.log(error);
+                      }
+                    }}>
+              Submit
+            </Button>
+          </Col>
+        </Row>
+        <Modal.Footer>
+          <Button className="score-form-Leave" 
+                  onClick={() => this.props.disapper()}   
+                  variant="outline-success">
+            Leave
+          </Button>
         </Modal.Footer>
       </Modal>
+      </>
     );
   }
 }
@@ -204,12 +199,11 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      squares: Array(9).fill("square"), //className for squares
-      leaders: [[1,"@test", 20], [2,"@kgb", 18], [3,"@etj", 15]],
+      squares: Array(9).fill("square"), //className for squares,
       score: 0,
       timeLeft: 5,
       show_alert: false,
-      data: [],
+      leaders: [],
     };
   }
 
@@ -269,13 +263,51 @@ class Game extends React.Component {
     }
   }
 
-  // async componentDidMount() {
-  //   const url = "https://gist.githubusercontent.com/natemek/48328f5890efb975a2f7fdef990b0eb0/raw/a74af4b6a1f263a1ba62713e69636db299552787/leaders";
-  //   const response = await fetch(url);
-  //   const api_data = await response.json();
-  //   this.setState({data: api_data})
-  //   console.log(api_data)
-  // }
+  async addLeader(username, score) {
+    console.log("add leader just got called with", username, " -> ", score);
+    const url = `/api/leaders/`;
+    const response = await fetch(url, {
+      method: 'post',
+      body: JSON.stringify({username: username, score: score}),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    const api_data = await response.json();
+    this.setState({leaders: []});
+    console.log("%%%%", api_data);
+    await api_data.forEach((obj) => {
+      const mapData = async () => {
+        this.setState(state => {
+          const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
+          return {
+            leaders,
+          };
+        })
+      }
+      mapData();
+    })
+
+  }
+  
+
+  async componentDidMount() {
+    const url = `/api/leaders/`;
+    const response = await fetch(url);
+    const api_data = await response.json();
+    console.log(api_data);
+    api_data.forEach((obj) => {
+      const mapData = async () => {
+        this.setState(state => {
+          const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
+          return {
+            leaders,
+          };
+        })
+      }
+      mapData();
+    })
+  }
 
   render () {
     return (
@@ -298,12 +330,12 @@ class Game extends React.Component {
           <GameOver show= {this.state.show_alert} 
               disapper= {() => this.setState({show_alert:false})}
               reset= {() => this.resetGame()}
-              addLeader= {() => this.addLeader()}
+              addLeader= {(username, score) => this.addLeader(username, score)}
               score= {this.state.score}/>
         </div>
         <div className="high-score-list">
           <h3>High Scores</h3>
-          <Leaderboard />
+          <Leaderboard leaders= {this.state.leaders}/>
         </div>
       </div>
     );

@@ -23,9 +23,12 @@
 
 .parent-div {
     padding: 50px;
-    background-color: bisque;
     width: 100vh;
     height: 100vh;
+}
+
+.leader-form-div .leader-form-btn {
+    float: left;
 }
 
 .game, .high-score-list {
@@ -34,19 +37,14 @@
 }
 
 .score-form-submit {
-    float: left;
-    margin-right: 60px;
-    margin-left: 5px;
+    float: right;
+    margin-right: 10px;
 }
 
 .score-form-leave {
     float: left;
     margin-left: 40px;
 }
-
-/* #score {
-    margin: auto;
-} */
 
 #time-left {
     margin: auto;
