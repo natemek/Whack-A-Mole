@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
-import './style.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Parse from 'parse/node';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
@@ -9,6 +8,13 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import './style.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Initialize parse to connect back4app
+Parse.initialize("3uKXhbYQc2aMctaS6bnJa26Q4Ecn7FKLTPbI9jED", "a7PvKS1QzTfpehFDMnR0ebGdPOHwI8ZpDQaB4jkk");
+Parse.serverURL = "https://parseapi.back4app.com/";
+
 
 /**
  * Represents a single square component which can be rendered using
@@ -129,13 +135,27 @@ class GameOver extends React.Component {
       username: "",
     };
   }
+   
+  checkHighScore() {
+    if (this.props.score > this.props.highscore) {
+      return (
+        <Modal.Title>
+          <span>🎉HIGHSCORE🎉</span> You Scored {this.props.score}
+        </Modal.Title>
+      );
+    } else {
+      return (
+        <Modal.Title>Game Over! You Scored {this.props.score}</Modal.Title>
+      );
+    }
+  }
 
   render () {
     return (
       <>
       <Modal show={this.props.show} onHide={() => (null)} animation="true">
         <Modal.Header>
-          <Modal.Title>Game Over! You Scored {this.props.score}</Modal.Title>
+          {this.checkHighScore()}
         </Modal.Header>
         <Row>
           <Col xs={9}>
@@ -152,6 +172,15 @@ class GameOver extends React.Component {
                 value={this.state.username}
                 onChange={(event) => {
                   this.setState({username: event.target.value});
+                }}
+                onSubmit={() => {
+                  try {
+                    this.props.disapper();
+                    this.props.addLeader(this.state.username, this.props.score);
+                    console.log("Enter pressed");
+                  } catch (error) {
+                    console.log(error);
+                  }
                 }}
                 required
               />
@@ -204,6 +233,7 @@ class Game extends React.Component {
       timeLeft: 5,
       show_alert: false,
       leaders: [],
+      highscore: 0,
     };
   }
 
@@ -213,7 +243,7 @@ class Game extends React.Component {
   randomSquare()  {
     const sqs = Array(9).fill("square");
     let randomPosition = Math.floor(Math.random() * 8)
-    console.log("Rand position = " + randomPosition)
+    // console.log("Rand position = " + randomPosition)
     sqs[randomPosition] = "mole"
     this.hitPosition = randomPosition // hitPosition is used to increment score
     this.setState({squares: sqs});
@@ -263,43 +293,88 @@ class Game extends React.Component {
     }
   }
 
+  // async addLeader(username, score) {
+  //   console.log("add leader just got called with", username, " -> ", score);
+  //   const url = `/api/leaders/`;
+  //   const response = await fetch(url, {
+  //     method: 'post',
+  //     body: JSON.stringify({username: username, score: score}),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     }
+  //   });
+  //   const api_data = await response.json();
+  //   this.setState({leaders: []});
+  //   console.log("%%%%", api_data);
+  //   await api_data.forEach((obj) => {
+  //     const mapData = async () => {
+  //       this.setState(state => {
+  //         const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
+  //         return {
+  //           leaders,
+  //         };
+  //       })
+  //     }
+  //     mapData();
+  //   })
+
+  // }
+  
   async addLeader(username, score) {
-    console.log("add leader just got called with", username, " -> ", score);
-    const url = `/api/leaders/`;
-    const response = await fetch(url, {
-      method: 'post',
-      body: JSON.stringify({username: username, score: score}),
-      headers: {
-        'Content-Type': 'application/json',
+    console.log("IM IN ADDLEADER");
+    if (this.state.highscore < score) { this.setState({highscore: score}); }
+    try {
+      const Leader = Parse.Object.extend('Leader');
+      const leader = new Leader();
+      leader.set("username", username);
+      leader.set("score", score);
+      leader.set("password", "none");
+      leader.save();
+
+      const leaders_query = new Parse.Query(Leader);
+      leaders_query.descending("score");
+      const leaders = await leaders_query.find();
+
+      console.log("Length = ", leaders.length);
+
+      if (leaders.length > 9) {
+        const remove = await leaders_query.ascending("score").first();
+        remove.destroy();
+        console.log(remove.get('username'));
       }
-    });
-    const api_data = await response.json();
-    this.setState({leaders: []});
-    console.log("%%%%", api_data);
-    await api_data.forEach((obj) => {
-      const mapData = async () => {
-        this.setState(state => {
-          const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
-          return {
-            leaders,
-          };
-        })
-      }
-      mapData();
-    })
+
+      const leaders_updated = await leaders_query.descending("score").find();
+      this.setState({leaders: []});
+      await leaders_updated.forEach((obj) => {
+        const mapData = async () => {
+          this.setState(state => {
+            const leaders = [...state.leaders, [obj.id, obj.get('username'), obj.get('score')] ];
+            return {
+              leaders,
+            };
+          })
+        }
+        mapData();
+      })
+    } catch (error) {
+      console.error(error);
+    }
 
   }
   
-
   async componentDidMount() {
-    const url = `/api/leaders/`;
-    const response = await fetch(url);
-    const api_data = await response.json();
-    console.log(api_data);
-    api_data.forEach((obj) => {
+    const Leader = Parse.Object.extend('Leader');
+    const leaders_query = new Parse.Query(Leader);
+    leaders_query.descending("score");
+    const leaders = await leaders_query.find();
+
+    let hs = await leaders_query.first();
+    this.setState({highscore: hs.get('score')});
+
+    leaders.forEach((obj) => {
       const mapData = async () => {
         this.setState(state => {
-          const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
+          const leaders = [...state.leaders, [obj.id, obj.get('username'), obj.get('score')] ];
           return {
             leaders,
           };
@@ -308,6 +383,24 @@ class Game extends React.Component {
       mapData();
     })
   }
+
+  // async componentDidMount() {
+  //   const url = `/api/leaders/`;
+  //   const response = await fetch(url);
+  //   const api_data = await response.json();
+  //   console.log(api_data);
+  //   api_data.forEach((obj) => {
+  //     const mapData = async () => {
+  //       this.setState(state => {
+  //         const leaders = [...state.leaders, [obj._id, obj.username, obj.score] ];
+  //         return {
+  //           leaders,
+  //         };
+  //       })
+  //     }
+  //     mapData();
+  //   })
+  // }
 
   render () {
     return (
@@ -331,7 +424,8 @@ class Game extends React.Component {
               disapper= {() => this.setState({show_alert:false})}
               reset= {() => this.resetGame()}
               addLeader= {(username, score) => this.addLeader(username, score)}
-              score= {this.state.score}/>
+              score= {this.state.score}
+              highscore= {this.state.highscore}/>
         </div>
         <div className="high-score-list">
           <h3>High Scores</h3>
