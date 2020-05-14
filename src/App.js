@@ -1,10 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import Parse from 'parse/node';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
-import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -140,7 +139,7 @@ class GameOver extends React.Component {
     if (this.props.score > this.props.highscore) {
       return (
         <Modal.Title>
-          <span>🎉HIGHSCORE🎉</span> You Scored {this.props.score}
+          <span role="img" aria-label="confetti">🎉HIGHSCORE 🎉</span> You Scored {this.props.score}
         </Modal.Title>
       );
     } else {
@@ -159,36 +158,33 @@ class GameOver extends React.Component {
         </Modal.Header>
         <Row>
           <Col xs={9}>
-            <Form>
-              <InputGroup>
-                <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroupPrepend">@</InputGroup.Text>
-              </InputGroup.Prepend>
-              <Form.Control
-                type="text"
-                placeholder="Username"
-                aria-describedby="inputGroupPrepend"
-                name="username"
-                value={this.state.username}
-                onChange={(event) => {
-                  this.setState({username: event.target.value});
-                }}
-                onSubmit={() => {
+            <Form onSubmit={(e) => {
                   try {
+                    e.preventDefault();
+                    this.props.resetGame();
                     this.props.disapper();
                     this.props.addLeader(this.state.username, this.props.score);
-                    console.log("Enter pressed");
+                    this.setState({username: ""});
                   } catch (error) {
                     console.log(error);
                   }
-                }}
-                required
-              />
-              <Form.Control.Feedback type="invalid">
-                Please choose a username.
-              </Form.Control.Feedback>
+                }}>
               
-              </InputGroup>
+                <Form.Control
+                  type="text"
+                  placeholder="Username"
+                  aria-describedby="inputGroupPrepend"
+                  name="username"
+                  value={this.state.username}
+                  onChange={(event) => {
+                    this.setState({username: event.target.value});
+                  }}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  Please choose a username.
+                </Form.Control.Feedback>
+              
             </Form>
           </Col>
           <Col>
@@ -196,9 +192,10 @@ class GameOver extends React.Component {
                     type="submit"
                     onClick={() => {
                       try {
+                        this.props.resetGame();
                         this.props.disapper();
                         this.props.addLeader(this.state.username, this.props.score);
-                        console.log("Submit button clicked");
+                        this.setState({username: ""});
                       } catch (error) {
                         console.log(error);
                       }
@@ -209,7 +206,10 @@ class GameOver extends React.Component {
         </Row>
         <Modal.Footer>
           <Button className="score-form-Leave" 
-                  onClick={() => this.props.disapper()}   
+                  onClick={() => {
+                    this.props.disapper();
+                    this.props.resetGame();
+                  }}   
                   variant="outline-success">
             Leave
           </Button>
@@ -266,6 +266,7 @@ class Game extends React.Component {
    * the user gameover and reports the final score
    */
   startTimer () {
+    this.resetGame();
     this.myInterval = setInterval(() => {
       if (this.state.timeLeft > 0) {
         this.setState({
@@ -274,10 +275,8 @@ class Game extends React.Component {
         this.randomSquare()
       } else {
         clearInterval(this.myInterval)
-        this.setState({squares: Array(9).fill("square")})
-        // alert('GAME OVER! Your final score is ' + this.state.score)
-        // GameOver();
-        this.setState({show_alert: true})
+        this.hitPosition = -1;
+        this.setState({squares: Array(9).fill("square"), show_alert: true})
       }
     }, 1000)
   }
@@ -289,10 +288,10 @@ class Game extends React.Component {
         score: 0,
         timeLeft: 5
       })
-      this.startTimer()
     }
   }
 
+  // This code is for using expressapi and mongo
   // async addLeader(username, score) {
   //   console.log("add leader just got called with", username, " -> ", score);
   //   const url = `/api/leaders/`;
@@ -321,7 +320,6 @@ class Game extends React.Component {
   // }
   
   async addLeader(username, score) {
-    console.log("IM IN ADDLEADER");
     if (this.state.highscore < score) { this.setState({highscore: score}); }
     try {
       const Leader = Parse.Object.extend('Leader');
@@ -333,43 +331,29 @@ class Game extends React.Component {
 
       const leaders_query = new Parse.Query(Leader);
       leaders_query.descending("score");
-      const leaders = await leaders_query.find();
+      let leaders = await leaders_query.find();
 
-      console.log("Length = ", leaders.length);
-
-      if (leaders.length > 9) {
+      if (leaders.length > 4) {
         const remove = await leaders_query.ascending("score").first();
-        remove.destroy();
-        console.log(remove.get('username'));
+        remove.destroy().then(() => {
+          console.log(remove.get('username'));
+          this.reRenderLeaders();
+        })
       }
-
-      const leaders_updated = await leaders_query.descending("score").find();
-      this.setState({leaders: []});
-      await leaders_updated.forEach((obj) => {
-        const mapData = async () => {
-          this.setState(state => {
-            const leaders = [...state.leaders, [obj.id, obj.get('username'), obj.get('score')] ];
-            return {
-              leaders,
-            };
-          })
-        }
-        mapData();
-      })
     } catch (error) {
       console.error(error);
     }
 
   }
   
-  async componentDidMount() {
+  async reRenderLeaders() {
     const Leader = Parse.Object.extend('Leader');
     const leaders_query = new Parse.Query(Leader);
     leaders_query.descending("score");
     const leaders = await leaders_query.find();
 
     let hs = await leaders_query.first();
-    this.setState({highscore: hs.get('score')});
+    this.setState({highscore: hs.get('score'), leaders: []});
 
     leaders.forEach((obj) => {
       const mapData = async () => {
@@ -384,6 +368,11 @@ class Game extends React.Component {
     })
   }
 
+  async componentDidMount() {
+    this.reRenderLeaders();
+  }
+
+  // This code is for using expressapi and mongo
   // async componentDidMount() {
   //   const url = `/api/leaders/`;
   //   const response = await fetch(url);
@@ -422,7 +411,7 @@ class Game extends React.Component {
           <Board squares= {this.state.squares} scoreCounter= {(i) => this.scoreCounter(i)}/>
           <GameOver show= {this.state.show_alert} 
               disapper= {() => this.setState({show_alert:false})}
-              reset= {() => this.resetGame()}
+              resetGame= {() => this.resetGame()}
               addLeader= {(username, score) => this.addLeader(username, score)}
               score= {this.state.score}
               highscore= {this.state.highscore}/>

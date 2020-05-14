@@ -71,6 +71,7 @@ app.post('/api/leaders/:username/:newscore', async (req, res) => {
             }
         }
         
+        var sort = {score: -1};
         const updatedLeadersList = await db.collection('leaders').find({}).sort(sort).toArray();
 
         res.status(200).json(updatedLeadersList);
@@ -126,6 +127,7 @@ app.delete('/api/leaders/:username', async (req, res) => {
     const db = client.db('leaders');
 
     try {
+        // eslint-disable-next-line no-unused-vars
         const deletedLeader = await db.collection('leaders').deleteOne({
             "username": userName
         });
@@ -146,6 +148,7 @@ app.delete('/api/leaders/', async (req, res) => {
     const db = client.db('leaders');
 
     try {
+        // eslint-disable-next-line no-unused-vars
         const deletedLeader = await db.collection('leaders').deleteMany({
             "score": {$lt: 30}
         });

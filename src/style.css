@@ -54,6 +54,11 @@
     background-color: violet;
 }
 
+button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 html, body {
     width: 100%;
     height: 100%;
