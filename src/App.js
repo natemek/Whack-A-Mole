@@ -7,11 +7,12 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import config from './config';
 import './style.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Initialize parse to connect back4app
-Parse.initialize("3uKXhbYQc2aMctaS6bnJa26Q4Ecn7FKLTPbI9jED", "a7PvKS1QzTfpehFDMnR0ebGdPOHwI8ZpDQaB4jkk");
+Parse.initialize(config.APP_KEY, config.JS_KEY);
 Parse.serverURL = "https://parseapi.back4app.com/";
 
 
