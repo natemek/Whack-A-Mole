@@ -1,26 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.e8e67b6a.chunk.css",
-    "main.js": "/static/js/main.fee30ea7.chunk.js",
-    "main.js.map": "/static/js/main.fee30ea7.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.afa3ab34.js",
-    "runtime-main.js.map": "/static/js/runtime-main.afa3ab34.js.map",
-    "static/css/2.69121389.chunk.css": "/static/css/2.69121389.chunk.css",
-    "static/js/2.5c6804d4.chunk.js": "/static/js/2.5c6804d4.chunk.js",
-    "static/js/2.5c6804d4.chunk.js.map": "/static/js/2.5c6804d4.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.046c54846dfff4a97dc6dd505359129b.js": "/precache-manifest.046c54846dfff4a97dc6dd505359129b.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/2.69121389.chunk.css.map": "/static/css/2.69121389.chunk.css.map",
-    "static/css/main.e8e67b6a.chunk.css.map": "/static/css/main.e8e67b6a.chunk.css.map",
-    "static/js/2.5c6804d4.chunk.js.LICENSE.txt": "/static/js/2.5c6804d4.chunk.js.LICENSE.txt",
-    "static/media/style.css": "/static/media/mole.cbdc9667.jpg"
+    "main.css": "/Whack-A-Mole/static/css/main.51640a63.chunk.css",
+    "main.js": "/Whack-A-Mole/static/js/main.7b626f7b.chunk.js",
+    "main.js.map": "/Whack-A-Mole/static/js/main.7b626f7b.chunk.js.map",
+    "runtime-main.js": "/Whack-A-Mole/static/js/runtime-main.fc6eec62.js",
+    "runtime-main.js.map": "/Whack-A-Mole/static/js/runtime-main.fc6eec62.js.map",
+    "static/css/2.69121389.chunk.css": "/Whack-A-Mole/static/css/2.69121389.chunk.css",
+    "static/js/2.f6a83161.chunk.js": "/Whack-A-Mole/static/js/2.f6a83161.chunk.js",
+    "static/js/2.f6a83161.chunk.js.map": "/Whack-A-Mole/static/js/2.f6a83161.chunk.js.map",
+    "index.html": "/Whack-A-Mole/index.html",
+    "precache-manifest.19e4ed33d8ae62bc26e6d38a7076cded.js": "/Whack-A-Mole/precache-manifest.19e4ed33d8ae62bc26e6d38a7076cded.js",
+    "service-worker.js": "/Whack-A-Mole/service-worker.js",
+    "static/css/2.69121389.chunk.css.map": "/Whack-A-Mole/static/css/2.69121389.chunk.css.map",
+    "static/css/main.51640a63.chunk.css.map": "/Whack-A-Mole/static/css/main.51640a63.chunk.css.map",
+    "static/js/2.f6a83161.chunk.js.LICENSE.txt": "/Whack-A-Mole/static/js/2.f6a83161.chunk.js.LICENSE.txt",
+    "static/media/style.css": "/Whack-A-Mole/static/media/mole.cbdc9667.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.afa3ab34.js",
+    "static/js/runtime-main.fc6eec62.js",
     "static/css/2.69121389.chunk.css",
-    "static/js/2.5c6804d4.chunk.js",
-    "static/css/main.e8e67b6a.chunk.css",
-    "static/js/main.fee30ea7.chunk.js"
+    "static/js/2.f6a83161.chunk.js",
+    "static/css/main.51640a63.chunk.css",
+    "static/js/main.7b626f7b.chunk.js"
   ]
 }
