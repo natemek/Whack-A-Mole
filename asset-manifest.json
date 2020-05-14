@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/Whack-A-Mole/static/css/main.51640a63.chunk.css",
+    "main.js": "/Whack-A-Mole/static/js/main.7b626f7b.chunk.js",
+    "main.js.map": "/Whack-A-Mole/static/js/main.7b626f7b.chunk.js.map",
+    "runtime-main.js": "/Whack-A-Mole/static/js/runtime-main.fc6eec62.js",
+    "runtime-main.js.map": "/Whack-A-Mole/static/js/runtime-main.fc6eec62.js.map",
+    "static/css/2.69121389.chunk.css": "/Whack-A-Mole/static/css/2.69121389.chunk.css",
+    "static/js/2.f6a83161.chunk.js": "/Whack-A-Mole/static/js/2.f6a83161.chunk.js",
+    "static/js/2.f6a83161.chunk.js.map": "/Whack-A-Mole/static/js/2.f6a83161.chunk.js.map",
+    "index.html": "/Whack-A-Mole/index.html",
+    "precache-manifest.19e4ed33d8ae62bc26e6d38a7076cded.js": "/Whack-A-Mole/precache-manifest.19e4ed33d8ae62bc26e6d38a7076cded.js",
+    "service-worker.js": "/Whack-A-Mole/service-worker.js",
+    "static/css/2.69121389.chunk.css.map": "/Whack-A-Mole/static/css/2.69121389.chunk.css.map",
+    "static/css/main.51640a63.chunk.css.map": "/Whack-A-Mole/static/css/main.51640a63.chunk.css.map",
+    "static/js/2.f6a83161.chunk.js.LICENSE.txt": "/Whack-A-Mole/static/js/2.f6a83161.chunk.js.LICENSE.txt",
+    "static/media/style.css": "/Whack-A-Mole/static/media/mole.cbdc9667.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.fc6eec62.js",
+    "static/css/2.69121389.chunk.css",
+    "static/js/2.f6a83161.chunk.js",
+    "static/css/main.51640a63.chunk.css",
+    "static/js/main.7b626f7b.chunk.js"
+  ]
+}
