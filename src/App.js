@@ -336,7 +336,7 @@ class Game extends React.Component {
       if (leaders.length > 4) {
         const remove = await leaders_query.ascending("score").first();
         remove.destroy().then(() => {
-          console.log(remove.get('username'));
+          //console.log(remove.get('username'));
           this.reRenderLeaders();
         })
       }
